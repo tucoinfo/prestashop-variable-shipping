@@ -178,7 +178,13 @@ class variableshipping extends CarrierModule
 	{
 		$context = Context::getContext();
 		if (!$context->employee || !$context->employee->id)
-			return false;
+		{
+			// allow in cart for checkout only if previously set (which is only possible via the BO)
+			if ( $context->cart->id_carrier != Configuration::get('VARIABLE_SHIPPING_CARRIER_ID') )
+			{
+				return false;
+			}
+		}
 
 		$value = file_get_contents(sys_get_temp_dir() . '/psvs-' . _DB_NAME_ . '-' . $params->id . '-' . $params->id_customer);
 		return $value ? round(floatval($value), 2) : 0.00;
